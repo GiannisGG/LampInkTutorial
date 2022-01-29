@@ -14,8 +14,7 @@
 
     //  Current state: {stateMachine}.<br>Checked against new state: {newState}.
   
-    {
-        -   stateMachine < newState:
+    {stateMachine < newState:
                 // <><br>Current state is lower and will be raised.
                 ~ stateMachine = newState
     }
@@ -42,7 +41,7 @@
 
 === lampOptions ===
 
-        + { lampEvents >= gotLamp and currentRoom != vault }[Rub the lamp.]->moveTo(->ending)
+        + { lampEvents >= gotLamp and lampEvents < metDjinn and currentRoom != vault }[Rub the lamp.]->moveTo(->ending)
 
 
 === GeographyOptions ===
