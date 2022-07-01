@@ -15,7 +15,7 @@
     
     {!This must be the cave's treasury, since it's filled with treasures beyond your wildest dreams. And from all these riches, the old fool wanted a plain oil lamp.|}
     
-    {An|The main} opening leads to another room in the cave.{ lampEvents == gotLamp: {Before all those shiny riches, you|You} feel a strange urge to rub {this dusty|the} lamp clean.}
+    {An|The main} opening leads to another room in the cave.{ inventory has lamp: {Before all those shiny riches, you|You} feel a strange urge to rub {this dusty|the} lamp clean.}
 
 //  The above sentence makes sure it offers variations
 //  everytime we revisit it.
@@ -33,14 +33,15 @@
     You marvel at the {amounts of gold|mountains of jewels|rivers of silk|endless riches. Who owns all this, you wonder}.
     
     {
-        -   lampEvents >= gotLamp:<> The lamp twitches inside your pocket, as if it shares the sentiment.
+        -   inventory has lamp:<> The lamp twitches inside your pocket, as if it shares the sentiment.
+        //  Do I need to check for has lamp in following too?
         -   lampEvents == seenLamp:<> How can that dirty bronze lamp be of more value than any item in this room?
         -   lampEvents == lampNotFound:<> And in this mythical place, are you supposed to look for a stupid old lamp?
     }
     
     { examineTreasure == 1:Hey, what's this? Behind a small hill of gold coins, you find something that looks like a secret door.|There is a secret door behind a pile of gold coins. <>}
     
-    ->stayAt(->visitTreasury)
+    ->beIn(->visitTreasury)
 
 
 === visitHall ===
@@ -82,14 +83,14 @@
     
     ~ raiseState(lampEvents, seenLamp)
 
-    { visitVault == 1:It's not actually a room, but a tiny vault|{ lampEvents has gotLamp:The vault looks much emptier without {it|the lamp}|Wow, this vault is tiny}}. In a corner rests a pile of ancient scrolls. Boring.
-    { lampEvents < gotLamp:You also see a dusty oil lamp, here. }
+    { visitVault == 1:It's not actually a room, but a tiny vault|{ inventory has lamp:The vault looks much emptier without {it|the lamp}|Wow, this vault is tiny}}. In a corner rests a pile of ancient scrolls. Boring.
+    { inventory hasnt lamp:You also see a dusty oil lamp, here. }
     
     //  The "Wow, this vault is tiny." will probably never fire, but this is defensive logic--better safe than sorry.
 
     -   (whatDo)
-        +   [Read the scrolls.]I said: bo-ring! ->stayAt(->whatDo)
-        *   { lampEvents hasnt gotLamp }[Take the lamp.] It's old and dusty. ->takeLamp
+        +   [Read the scrolls.]I said: bo-ring! ->beIn(->whatDo)
+        *   { inventory hasnt lamp }[Take the lamp.] It's old and dusty. ->takeLamp
 
 
     = takeLamp
@@ -132,8 +133,8 @@
 		--	You unleash your anger on the inanimate thing, not helping feeling a little silly in the process. The lamp doesn't fight back, but you think you hear distant laughter; as if from another dimension.
             **  [Oh, just take the thing.]->justTakeIt
         *   (justTakeIt)[Oh, just take it already.]Okay, enough monkeying around. Inanimate or not, you decide not to let your fear rule your actions. You take the lamp and put it in your pockets.
-            ~ raiseState(lampEvents, gotLamp)
-            ->stayAt(->visitVault)
+            ~ inventory += lamp
+            ->beIn(->visitVault)
 
 
 === ending ===
@@ -141,6 +142,8 @@
     ~ raiseState(lampEvents, metDjinn)
 
     You give the lamp a good rub with your sleeve and it starts twitching again. But you are used to it, by now, so you tightly hold onto it.
+    
+    //  Implement jolly/grumpy djinnMood
     
     A puff of smokes comes out its mouth and—ALAKAZAM!—a Djinn appears. "There's the rub!" they say. "After three thousand years, I started losing hope." They take a better look at you. "So, did you review my job application?"
     

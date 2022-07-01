@@ -43,12 +43,14 @@ VAR pokerItem = "the palm of your hand"
     //  firstReaction is the first stitch of the knot Treasury.
 
     This must be the cave's treasury. You see treasures beyond your wildest dreams. -> routineReaction
+    
+    //  Every time we end up here, we get a slightly different description, just to spice things up a little.
 
     = routineReaction
     { not goDeeper:{An|The main} opening leads to another room in the cave.|{|The exit is { | |still | |always }blocked by the collapsed roof.}}{ hasLamp: {Before all those shiny riches, you|You} feel a strange urge to rub {this dusty|the} lamp clean.}
     
     //  Check all the { and } in the above paragraph.
-    //  Some have conditionals.
+    //  Some have conditionals, eg " { not goDeeper:...}
     //  Others have text that varies each time we visit the stitch.
     //  Notice how they nest, one inside the other.
 
@@ -56,13 +58,15 @@ VAR pokerItem = "the palm of your hand"
 //  All but one of the following options
 //  are dependent on variable values:
 
-        +   {hasLamp}[Rub the lamp.] ->ending
+        +   {hasLamp}[Rub the lamp.] ->ending // Option to rub the lamp if you have it.
         +   [Examine the treasure.] ->examineTreasure
-        *   {not goDeeper}[Go deeper into the cave.] ->goDeeper
+        *   {not goDeeper}[Go deeper into the cave.] ->goDeeper // If you haven't already done so, you can try going deeper into the cave.
         +	{secretRoomDiscovered} [{secretRoom:Enter the vault|Try the secret door}.]You open the secret door and squeeze in. ->secretRoom
 
 //  The only thing you can do in any case
 //  is examine the treasure.
+
+//  Note that "goDeeper" is not declared as global variable. Ink stores values for each time we visit a knot or stitch. If we haven't visited the "goDeeper" knot, the value of "goDeeper" is false (more accurately: 0). If we have visited it, the value is true (more accurately: the number of visits).
 
 === examineTreasure ===
 
@@ -81,7 +85,7 @@ VAR pokerItem = "the palm of your hand"
 //  You may have realised that "secretRoomDiscovered"
 //  is a redundant variable. Why?
 //  Since we assign it to "true" when we visit "examineTreasure,"
-//  we can simply do the check using:
+//  we can simply do the check using the value of examineTreasure instead:
 //  { examineTreasure == 1:What's this... |There is a... }
 //  instead.
 //  This would spare the need for a multi-line block, as well.
@@ -125,8 +129,10 @@ VAR pokerItem = "the palm of your hand"
 		    **  [Approach the thing.]->examined
 		    //  Diverts to the (examined) choice, above.
 		
+		//  After all of the above is done, we proceed to the next gather:
 	-   Nothing. The thing looks as inanimate as a lamp is supposed to be. Still, just seconds ago, you felt it twitch between your fingers!
 
+            //  The {examined} condition below is redundant, since there is no way we reach this point without having examined the lamp before the previous gather. Still, it's good practice to rely on such "defensive logic," since not always can we deduct conclusions as to what the player must have done. Better safe than sorry.
         *   {examined}[Look inside it.]You approach your face to the lamp,
 		*   [Poke it with something.]You look around the treasury for something long enough to use as a poker and close enough to reach without taking your eyes off the lamp. You grab...
 		        
@@ -151,12 +157,16 @@ VAR pokerItem = "the palm of your hand"
 			**	[Stamp on it.]
 			**	[Throw it against a wall.]
 			**  [Whack it with {pokerItem}.]
+			
+			//  All the above actions lead to the same result/gather:
+			
 		--	You unleash your anger on the inanimate thing, not helping feeling a little silly in the process. The lamp doesn't fight back, but you think you hear distant laughter; as if from another dimension.
             **  [Oh, just take the thing.]->justTakeIt
         *   (justTakeIt)[Oh, just take it already.]Okay, enough monkeying around. Inanimate or not, you decide not to let your fear rule your actions. You take the lamp and put it in your pockets.
             ~ hasLamp = true
             ->secretRoom
 
+    //  Phew! That was it! Did you manage to follow the flow?
 
 === ending ===
 
@@ -177,3 +187,4 @@ VAR pokerItem = "the palm of your hand"
     
     -> END
 
+    //  Tadah!
