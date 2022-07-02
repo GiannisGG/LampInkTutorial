@@ -170,7 +170,7 @@ VAR pokerItem = "the palm of your hand"
 
 === ending ===
 
-    You rub the lamp with your sleeve. A Djinn appears. "Finally!" they say. "After three thousand years, I started losing hope." They take a better look at you. "So, did you review my job application?"
+    You rub the lamp with your sleeve. A Djinn appears. "Finally!" it says. "After three thousand years, I started losing hope." It takes a better look at you. "So, did you review my job application?"
     
         *   "The job what?"
         *   "The what application?"
@@ -178,7 +178,7 @@ VAR pokerItem = "the palm of your hand"
 
     -   <> you whisper, horrified.
     
-        The Djinn rolls their eyes with a sigh. "How can I help?" they ask.
+        The Djinn rolls its eyes with a sigh. "How can I help?" it asks.
     
         *   (endIt)"Get me out of here!"[]{not sucks: you scream in anguish.}
         *   (sucks)"This game sucks[."]," you scream in anguish. -> endIt
