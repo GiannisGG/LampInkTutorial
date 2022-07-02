@@ -89,14 +89,14 @@
     
     ~ raiseState(lampEvents, seenLamp)
 
-    { visitVault == 1:It's not actually a room, but a tiny vault|{ inventory has lamp:The vault looks much emptier without {it|the lamp}|Wow, this vault is tiny}}. In a corner rests a pile of ancient scrolls. Boring.
+    { visitVault == 1:It's not actually a room, but a tiny vault|{ inventory has lamp:The vault looks much emptier without {it|the lamp}|Wow, look at how tiny it is}}. In a corner rests a pile of ancient scrolls. Boring.
     { inventory hasnt lamp:You also see a dusty oil lamp, here. }
-    
-    //  The "Wow, this vault is tiny." will probably never fire, but this is defensive logic--better safe than sorry.
 
-    -   (whatDo)
-        +   [Read the scrolls.]I said: bo-ring! ->beIn(->whatDo)
-        *   { inventory hasnt lamp }[Take the lamp.] It's old and dusty. ->takeLamp
+-   (whatDo)
+
+    +   [Read the scrolls.]I said: bo-ring! ->beIn(->whatDo)
+    
+    *   { inventory hasnt lamp }[Take the lamp.] It's old and dusty. ->takeLamp
 
 
     = takeLamp
@@ -105,42 +105,50 @@
 
     It moved! The thing moved!
 
-		*   (examined)[Examine the lamp.]You take a closer look at the lamp, as it lays on the vault's sandy floor.
-		*   [Stay completely still.]You hold your breath and stay still.
-		    
-		    **  [Approach the thing.]->examined
-		
-	-   Nothing. The thing looks as inanimate as a lamp is supposed to be. Still, just seconds ago, you felt it twitch between your fingers!
+	*   (examined)[Examine the lamp.]You take a closer look at the lamp, as it lays on the vault's sandy floor.
+	
+	*   [Stay completely still.]You hold your breath and stay still.
+	    
+	    **  [Approach the thing.]->examined
+	
+-   Nothing. The thing looks as inanimate as a lamp is supposed to be. Still, just seconds ago, you felt it twitch between your fingers!
 
-        *   {examined}[Look inside it.]You approach your face to the lamp,
-		*   [Poke it with something.]You look around the treasury for something long enough to use as a poker and close enough to reach without taking your eyes off the lamp. You grab...
-		        
-            **  ... a silver sceptre[.]
-                ~ pokerItem = "the sceptre"
-            **  ... a golden statue of a cat[.]
-                ~ pokerItem = "the cat statue"
-            **  ... a platinum ceremonial mace[.]
-                ~ pokerItem = "the platinum mace"
+    *   {examined}[Look inside it.]You approach your face to the lamp,
+    
+	*   [Poke it with something.]You look around the treasury for something long enough to use as a poker and close enough to reach without taking your eyes off the lamp. You grab...
+	        
+        **  ... a silver sceptre[.]
+            ~ pokerItem = "the sceptre"
             
-        --  <> and cautiously poke the lamp with it. You only remember squeezing {pokerItem} tight
+        **  ... a golden statue of a cat[.]
+            ~ pokerItem = "the cat statue"
+            
+        **  ... a platinum ceremonial mace[.]
+            ~ pokerItem = "the platinum mace"
         
-        *   "He-hello?"[] you whisper...
+    --  <> and cautiously poke the lamp with it. You only remember squeezing {pokerItem} tight
+    
+    *   "He-hello?"[] you whisper...
 
-	-   <> before letting out a wail of horror.
+-   <> before letting out a wail of horror.
+
+    The lamp has just twitched again!
+
+	*   [Hit the thing!]You approach the lamp with cruel intentions.
 	
-	    The lamp has just twitched again!
+		**	[Kick it.]
+		**  [Head-butt it.]
+		**	[Stamp on it.]
+		**	[Throw it against a wall.]
+		**  [Whack it with {pokerItem}.]
+		
+	--	You unleash your anger on the inanimate thing, not helping feeling a little silly in the process. The lamp doesn't fight back, but you think you hear distant laughter; as if from another dimension.
 	
-		*   [Hit the thing!]You approach the lamp with cruel intentions.
-			**	[Kick it.]
-			**  [Head-butt it.]
-			**	[Stamp on it.]
-			**	[Throw it against a wall.]
-			**  [Whack it with {pokerItem}.]
-		--	You unleash your anger on the inanimate thing, not helping feeling a little silly in the process. The lamp doesn't fight back, but you think you hear distant laughter; as if from another dimension.
-            **  [Oh, just take the thing.]->justTakeIt
-        *   (justTakeIt)[Oh, just take it already.]Okay, enough monkeying around. Inanimate or not, you decide not to let your fear rule your actions. You take the lamp and put it in your pockets.
-            ~ inventory += lamp
-            ->beIn(->visitVault)
+        **  [Oh, just take the thing.]->justTakeIt
+        
+    *   (justTakeIt)[Oh, just take it already.]Okay, enough monkeying around. Inanimate or not, you decide not to let your fear rule your actions. You take the lamp and put it in your pockets.
+        ~ inventory += lamp
+        ->beIn(->visitVault)
 
 
 === ending ===
@@ -155,8 +163,6 @@ You can certainly expand it, by adding knots for the
 
     You give the lamp a good rub with your sleeve and it starts twitching again. But you are used to it, by now, so you tightly hold onto it.
     
-TODO:    Implement jolly/grumpy djinnMood
-    
     A puff of smokes comes out its mouth and—ALAKAZAM!—a Djinn appears. "There's the rub!" it says. "After three thousand years, I started losing hope." Then, after taking a better look at you: "So, did you review my job application?"
     
         *   "The job what?"
@@ -168,6 +174,7 @@ TODO:    Implement jolly/grumpy djinnMood
         The Djinn rolls its eyes with a sigh. "How can I help?" it asks.
     
         *   (endIt)"Get me out of here!"[]{not sucks: you scream in anguish.}
+        
         *   (sucks)"This game sucks[."]," you scream in anguish. -> endIt
     
     -   "Your wish is my command," says the Djinn.
