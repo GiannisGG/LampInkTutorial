@@ -5,7 +5,7 @@
     After what feels like a century, you open your eyes. It takes a while for them to get used to the darkness. That was one hell of a fall.
     
     You look around you. <>
-    ->visitTreasury
+    ->DONE
 
 
 === visitTreasury ===
@@ -58,8 +58,15 @@
     ~ currentRoomAddress = ->visitJunkRoom
     
     {!This room is full of junk. |}Piles of rags. Broken crates. Mouldy cheese.
+    
+    +   {inventory hasnt coin}[Search the junk.]You have all the time in the world, so why not invest some in searching through the junk?
+    
+        After what seemed like days, you find a worthless coin made of tin. For some reason, you decide to take it. (It IS useless, though, be warned.)
+        
+        ~ inventory += coin
+        ->beIn(currentRoomAddress)
 
-    -> DONE
+-   -> DONE
 
 === visitFountain ===
 
@@ -69,11 +76,10 @@
     A small fountain is here.->choices
     
     = choices
+        
+    *   [Drink some water.]You gulp down huge quantities of water. Refreshing.
     
-        *   [Drink some water.]You gulp down huge quantities of water. Refreshing.
-            <-choices
-            <-GeographyOptions
-            -> DONE
+        ->beIn(currentRoomAddress)
 
 
 === visitVault ===
@@ -139,13 +145,19 @@
 
 === ending ===
 
+/*
+Let's close this demo tutorial here.
+You can certainly expand it, by adding knots for the
+3-wish granting, more rooms, or anything else you want.
+*/
+
     ~ raiseState(lampEvents, metDjinn)
 
     You give the lamp a good rub with your sleeve and it starts twitching again. But you are used to it, by now, so you tightly hold onto it.
     
-    //  Implement jolly/grumpy djinnMood
+TODO:    Implement jolly/grumpy djinnMood
     
-    A puff of smokes comes out its mouth and—ALAKAZAM!—a Djinn appears. "There's the rub!" they say. "After three thousand years, I started losing hope." They take a better look at you. "So, did you review my job application?"
+    A puff of smokes comes out its mouth and—ALAKAZAM!—a Djinn appears. "There's the rub!" it says. "After three thousand years, I started losing hope." Then, after taking a better look at you: "So, did you review my job application?"
     
         *   "The job what?"
         *   "The what application?"
@@ -153,7 +165,7 @@
 
     -   <> you whisper, horrified.
     
-        The Djinn rolls their eyes with a sigh. "How can I help?" they ask.
+        The Djinn rolls its eyes with a sigh. "How can I help?" it asks.
     
         *   (endIt)"Get me out of here!"[]{not sucks: you scream in anguish.}
         *   (sucks)"This game sucks[."]," you scream in anguish. -> endIt

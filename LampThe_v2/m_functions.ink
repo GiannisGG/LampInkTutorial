@@ -22,7 +22,7 @@
     // <><br>Current state is now: {stateMachine}.
 
 
-=== updatePreviousRoomWhileGoingTo(->targetRoom) ===
+=== exitTo(->targetRoom) ===
 
 //  Since functions can't contain diverts,
 //  this isn't a function, but a divert with arguments.
@@ -47,12 +47,12 @@
 //  a thread by combining:
 //  1. the room's knot (passed as argument)
 //  2. the GeographyOptions knot and
-//  3. the lampOptions knot.
+//  3. the inventoryOptions knot.
 
     <-targetRoom
     // <i>(Current Room is: {currentRoom})</i>
     <-GeographyOptions
-    <-lampOptions
+    <-inventoryOptions
     //  To avoid an Inky warning, we add a ->DONE
     //  divert, to show that we haven't just forgotten
     //  an eventual divert.
@@ -61,14 +61,84 @@
     //  provided by the previous threads.
 
 
-=== lampOptions ===
+=== inventoryOptions ===
 
 //  This knot is used in the beIn knot,
 //  called every time we enter a room.
-//  It basically says: if we carry the lamp,
-//  we get the option to rub it.
-//  (No text--just one option with a conditional.)
-        + { inventory has lamp and lampEvents < metDjinn and currentRoom != vault }[Rub the lamp.]->updatePreviousRoomWhileGoingTo(->ending)
+
+        +   [Take inventory.]->takeInventory->beIn(currentRoomAddress)
+
+/*
+TUNNELS
+The "->takeInventory-> syntax is for calling a tunnel.
+Tunnels are knots that run and then return us
+to where we were before the diversion.
+They have the stack logic, like functions: if we don't
+divert the flow again, they will return us
+to the point we called them.
+
+So, here, we call takeInventory, it runs, returns,
+and we then continue with ->beIn(currentRoomAddress).
+*/
+
+
+
+=== takeInventory ===
+/*
+This is a very basic inventory implementation.
+We can get to see what we are carrying and
+perhaps have an extra option or two, to interact
+with those items.
+*/
+
+/*
+To show what we are carrying, we get the value of
+the inventory LIST.
+Check Ink's documentation for a good example of
+"nicer list printing," which takes into consideration
+whether there are 3 or more, 2, 1, or no items in the list.
+*/
+    = checkItems
+You are carrying: {inventory}.
+
+    *   { inventory has bread and breadState == dry and currentRoom == fountain}[Wet your bread.]You wet the bread in the fountain. It's now much softer and edible.
+        ~ breadState = wet
+        ->checkItems
+    
+    +   { inventory has bread }[Eat the bread.]
+        {breadState == wet:
+            You wolf down the wet, softened bread. Nourishing.
+            ~ inventory -= bread
+        - else:
+            You {|could }attempt taking a bite off the bread, but it's too dry. You {almost broke a tooth|don't want to risk breaking your teeth}.
+        }
+        ->checkItems
+        
+    //  You can rub the lamp, but not while in the vault:
+    +   { inventory has lamp and lampEvents < metDjinn }[Rub the lamp.]
+        {currentRoom == vault: Not in here.|->ending}
+        
+    +   { inventory has coin }[{currentRoom == fountain:Toss the coin and make a wish|Admire the tin coin}.]
+        
+        {currentRoom == fountain:
+        
+            You toss the coin into the fountain, wishing for this nightmare to end and for you to be free again...
+            
+            No. No miracle happened. You're still here.
+            
+            ~ inventory -= coin
+        
+        - else:
+        
+            You take the coin out of your pocket and give it an affectionate rub. Ah... Look at that worthless little thing...
+        }
+        ->checkItems
+        
+    +   [Return to your quest.]
+    
+-
+    //  Tunnels end with the "->->" return statement:
+    ->->
 
 
 === GeographyOptions ===
@@ -95,19 +165,19 @@
         //  examined the treasure (thus finding the secret
         //  door), but you haven't visited the Vault yet:
         //  you get:
-        +   { currentRoom == treasury && visitTreasury.examineTreasure && not visitVault}[Try the secret door.]You open the secret door and squeeze in. ->updatePreviousRoomWhileGoingTo(->visitVault)
+        +   { currentRoom == treasury && visitTreasury.examineTreasure && not visitVault}[Try the secret door.]You open the secret door and squeeze in. ->exitTo(->visitVault)
         
         //  If you are in the hall and the previous room
         //  is not the fountain:
-        +   { currentRoom == hall and previousRoom != fountain}[Enter the { visitFountain:fountain room|room with the sound of water}.]->updatePreviousRoomWhileGoingTo(->visitFountain)
-        +   { currentRoom == hall and previousRoom != junk}[Enter the { visitJunkRoom:junk room|silent room}.]->updatePreviousRoomWhileGoingTo(->visitJunkRoom)
-        +   { currentRoom == hall and previousRoom != treasury }[Enter the treasury.]->updatePreviousRoomWhileGoingTo(->visitTreasury)
+        +   { currentRoom == hall and previousRoom != fountain}[Enter the { visitFountain:fountain room|room with the sound of water}.]->exitTo(->visitFountain)
+        +   { currentRoom == hall and previousRoom != junk}[Enter the { visitJunkRoom:junk room|silent room}.]->exitTo(->visitJunkRoom)
+        +   { currentRoom == hall and previousRoom != treasury }[Enter the treasury.]->exitTo(->visitTreasury)
         +   { currentRoom != previousRoom}[Return to the {previousRoom}{previousRoom == junk or previousRoom == fountain: room}.]->returnToPreviousRoom
         +   { currentRoom == treasury && not visitHall }[Exit the treasury.]You pat the dust off your clothes and clumsily find your way out of the treasury.
-            ->updatePreviousRoomWhileGoingTo(->visitHall)
+            ->exitTo(->visitHall)
 
 
 === returnToPreviousRoom ===
 
     You return to the {previousRoom}{previousRoom == junk or previousRoom == fountain: room}.
-    <> ->updatePreviousRoomWhileGoingTo(previousRoomAddress)
+    <> ->exitTo(previousRoomAddress)
