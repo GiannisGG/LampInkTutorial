@@ -111,15 +111,13 @@ VAR previousRoomAddress = ->visitTreasury
 <-intro
 <-beIn(currentRoomAddress)
 
-// <-GeographyOptions
 /*
     This shows:
     
-        1.  the text content of "intro."
-        2.  the text content of "GeographyOptions"
-            (although in this case there is none).
+        1.  the text content of the "intro" knot.
+        2.  the text content of the "beIn" knot.
         3.  the player options of "intro."
-        4.  the player options of "GeographyOptions."
+        4.  the player options of "beIn."
 
     ... in this specific order.
 */
